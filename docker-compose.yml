@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  service-discovery:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/discovery
+    command: dotnet ConnectCore.ServiceDiscovery.dll --urls=http://0.0.0.0:8001
+    ports:
+      - "8001:8001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8001
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  user-service:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/users
+    command: dotnet ConnectCore.UserService.dll --urls=http://0.0.0.0:8002
+    ports:
+      - "8002:8002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8002
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  product-service:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/products
+    command: dotnet ConnectCore.ProductService.dll --urls=http://0.0.0.0:8003
+    ports:
+      - "8003:8003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8003
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8003/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  order-service:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/orders
+    command: dotnet ConnectCore.OrderService.dll --urls=http://0.0.0.0:8004
+    ports:
+      - "8004:8004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8004
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8004/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  notification-service:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/notifications
+    command: dotnet ConnectCore.NotificationService.dll --urls=http://0.0.0.0:8005
+    ports:
+      - "8005:8005"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8005
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8005/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  gateway:
+    build: 
+      context: .
+      target: final
+    working_dir: /app/gateway
+    command: dotnet ConnectCore.Gateway.dll --urls=http://0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
