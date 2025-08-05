@@ -1,37 +1,52 @@
-# Simplified Dockerfile for Render deployment (Gateway-only)
+# Multi-stage build for Render deployment
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Non-root user
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
+# Copy project files
 COPY ["ConnectCore.sln", "."]
 COPY ["src/ConnectCore.Gateway/ConnectCore.Gateway.csproj", "src/ConnectCore.Gateway/"]
 COPY ["src/ConnectCore.Shared/ConnectCore.Shared.csproj", "src/ConnectCore.Shared/"]
 
-# Restore dependencies
-RUN dotnet restore "src/ConnectCore.Gateway/ConnectCore.Gateway.csproj"
+RUN dotnet restore "src/ConnectCore.Gateway/ConnectCore.Gateway.csproj" \
+    --runtime linux-x64
 
-# Copy source code
 COPY . .
 
-# Build and publish Gateway
-RUN dotnet publish "src/ConnectCore.Gateway/ConnectCore.Gateway.csproj" -c Release -o /app/publish --no-restore
+# Build and publish
+RUN dotnet publish "src/ConnectCore.Gateway/ConnectCore.Gateway.csproj" \
+    -c Release \
+    -o /app/publish \
+    --no-restore \
+    --runtime linux-x64 \
+    --self-contained false
 
-# Final stage
+# Final production stage
 FROM base AS final
 WORKDIR /app
-
-# Install curl for health checks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Copy published application
 COPY --from=build /app/publish .
 
+# Set ownership and permissions
+RUN chown -R appuser:appgroup /app
+USER appuser
+
 # Add health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
+
+# Set environment variables for production
+ENV ASPNETCORE_ENVIRONMENT=Production \
+    ASPNETCORE_URLS=http://0.0.0.0:8080 \
+    DOTNET_USE_POLLING_FILE_WATCHER=true
 
 ENTRYPOINT ["dotnet", "ConnectCore.Gateway.dll"]

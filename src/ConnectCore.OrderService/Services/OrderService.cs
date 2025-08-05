@@ -154,7 +154,7 @@ public class OrderService : IOrderService
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // Reserve stock (simulate call to product service)
+            
             foreach (var item in createOrderDto.Items)
             {
                 await ReserveProductStockAsync(item.ProductId, item.Quantity);
@@ -185,7 +185,7 @@ public class OrderService : IOrderService
             order.UpdatedAt = DateTime.UtcNow;
             order.UpdatedBy = "API";
 
-            // Set status-specific timestamps
+            
             switch (status)
             {
                 case OrderStatus.Shipped when previousStatus != OrderStatus.Shipped:
@@ -224,7 +224,7 @@ public class OrderService : IOrderService
                 return ApiResponse<bool>.FailureResult("Cannot cancel shipped or delivered orders");
             }
 
-            // Release reserved stock
+            
             foreach (var item in order.Items)
             {
                 await ReleaseProductStockAsync(item.ProductId, item.Quantity);
@@ -356,8 +356,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            // Simulate call to Product Service to reserve stock
-            await Task.Delay(10); // Simulate network call
+            
+            await Task.Delay(10); 
             _logger.LogInformation("Reserved {Quantity} units of product {ProductId}", quantity, productId);
             return true;
         }
@@ -372,8 +372,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            // Simulate call to Product Service to release stock
-            await Task.Delay(10); // Simulate network call
+            
+            await Task.Delay(10); 
             _logger.LogInformation("Released {Quantity} units of product {ProductId}", quantity, productId);
             return true;
         }

@@ -45,7 +45,7 @@ public class NotificationDbContext : DbContext
             new Notification
             {
                 Id = Guid.Parse("11111000-1111-1111-1111-111111111111"),
-                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"), // John Doe
+                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"), 
                 Title = "Order Confirmed",
                 Message = "Your order #11110000-1111-1111-1111-111111111111 has been confirmed and is being processed.",
                 Type = NotificationType.Email,
@@ -58,7 +58,7 @@ public class NotificationDbContext : DbContext
             new Notification
             {
                 Id = Guid.Parse("22222000-2222-2222-2222-222222222222"),
-                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"), // John Doe
+                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"), 
                 Title = "Order Shipped",
                 Message = "Good news! Your order has been shipped and is on its way to you.",
                 Type = NotificationType.SMS,
@@ -71,7 +71,7 @@ public class NotificationDbContext : DbContext
             new Notification
             {
                 Id = Guid.Parse("33333000-3333-3333-3333-333333333333"),
-                UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"), // Jane Smith
+                UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"), 
                 Title = "Welcome to ConnectCore!",
                 Message = "Welcome to ConnectCore! We're excited to have you on board. Explore our products and start shopping.",
                 Type = NotificationType.Email,
@@ -84,7 +84,7 @@ public class NotificationDbContext : DbContext
             new Notification
             {
                 Id = Guid.Parse("44444000-4444-4444-4444-444444444444"),
-                UserId = Guid.Parse("33333333-3333-3333-3333-333333333333"), // Bob Johnson
+                UserId = Guid.Parse("33333333-3333-3333-3333-333333333333"), 
                 Title = "Order Processing",
                 Message = "Your order is currently being processed. We'll notify you once it ships.",
                 Type = NotificationType.Push,

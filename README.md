@@ -1,60 +1,178 @@
-# ConnectCore - API Integration Hub
+# ConnectCore - Microservices Platform
 
-A professional microservices-based API Integration Hub built with .NET 8.
+Enterprise-grade microservices API platform built with .NET 8.
+
+## Overview
+
+ConnectCore is a scalable microservices architecture featuring a centralized API gateway, service discovery, and multiple business services. Built with modern .NET technologies and containerized for production deployment.
+
+## Architecture
+
+- **API Gateway**: YARP reverse proxy with Swagger documentation
+- **Service Discovery**: In-memory service registry for dynamic service location
+- **User Service**: User management and authentication
+- **Product Service**: Product catalog and inventory management
+- **Order Service**: Order processing and management
+- **Notification Service**: Multi-channel notification system
+- **Shared Library**: Common DTOs, middleware, and validation logic
+
+## Technology Stack
+
+- ASP.NET Core 8.0
+- Entity Framework Core (In-Memory)
+- YARP Reverse Proxy
+- Serilog Structured Logging
+- FluentValidation
+- Docker & Docker Compose
 
 ## Quick Start
 
 ### Prerequisites
+
 - .NET 8.0 SDK
+- Docker Desktop
 
 ### Local Development
+
 ```bash
-git clone <repository-url>
-cd ConnectCore
+# Restore dependencies
 dotnet restore
-dotnet build
+
+# Build solution
+dotnet build --configuration Release
+
+# Run with Docker Compose
+docker-compose up -d
 ```
 
-### Docker Deployment
+### Production Deployment
+
 ```bash
-docker build -t connectcore .
-docker run -p 8080:8080 connectcore
+# Build for production (single container)
+docker build -f Dockerfile.render -t connectcore-api .
+
+# Run container
+docker run -d -p 8080:8080 connectcore-api
+
+# Build full microservices stack
+docker build -t connectcore-full .
 ```
 
-### Access
-- Application: http://localhost:8080
-- API Documentation: http://localhost:8080/swagger
-- Health Check: http://localhost:8080/health
+## API Endpoints
 
-## Services
-- API Gateway (Port 8080)
-- Service Discovery
-- User Service
-- Product Service  
-- Order Service
-- Notification Service
+Once running, the following endpoints are available:
 
-## Technology Stack
-- ASP.NET Core 8.0
-- Entity Framework Core
-- YARP Reverse Proxy
-- Serilog Logging
-- FluentValidation
-- Swagger/OpenAPI
+- **API Gateway**: http://localhost:8080
+- **Swagger Documentation**: http://localhost:8080/swagger
+- **Health Checks**: http://localhost:8080/health
+
+### Service URLs (Development)
+
+- Service Discovery: http://localhost:8001
+- User Service: http://localhost:8002
+- Product Service: http://localhost:8003
+- Order Service: http://localhost:8004
+- Notification Service: http://localhost:8005
+
+## Security Features
+
+- Input validation with FluentValidation
+- Structured logging with correlation IDs
+- Non-root Docker containers
+- Environment-based configuration
+- CORS policies configured
+- Health check endpoints
+
+## Configuration
+
+The application uses environment-based configuration:
+
+- **Development**: Individual service configurations
+- **Production**: Centralized configuration via `appsettings.Production.json`
+
+## Monitoring & Health Checks
+
+Health checks are available at `/health` for all services:
+
+- Automated health monitoring
+- Structured logging with correlation IDs
+- Docker container health checks
+- Service discovery integration
+
+## Docker Support
+
+### Multi-Service Deployment (Dockerfile)
+- Runs all services in a single container
+- Suitable for development and testing
+- Uses startup script for service orchestration
+
+### Single Service Deployment (Dockerfile.render)
+- Optimized for production deployment
+- API Gateway only with service discovery
+- Smaller footprint and faster startup
+
+## Development
+
+### Project Structure
+```
+src/
+├── ConnectCore.Gateway/          # API Gateway & Reverse Proxy
+├── ConnectCore.ServiceDiscovery/ # Service Registry
+├── ConnectCore.UserService/      # User Management
+├── ConnectCore.ProductService/   # Product Catalog
+├── ConnectCore.OrderService/     # Order Processing
+├── ConnectCore.NotificationService/ # Notifications
+└── ConnectCore.Shared/           # Shared Components
+```
+
+### Building the Solution
+
+```bash
+# Clean build
+dotnet clean
+dotnet restore
+dotnet build --configuration Release
+
+# Run tests (if available)
+dotnet test
+
+# Publish for deployment
+dotnet publish --configuration Release
+```
 
 ## Deployment
 
-### Render (Recommended)
-1. Fork this repository
-2. Connect to Render
-3. Create a new Web Service
-4. Select this repository
-5. Use the `render.yaml` configuration
-6. Set environment variables in Render dashboard
+### Container Registry
 
-### Alternative Cloud Platforms
-- **Docker**: Use the included `Dockerfile` for containerized deployment
-- **CI/CD**: GitHub Actions workflow included for automated deployment
+```bash
+# Tag for registry
+docker tag connectcore-api your-registry.com/connectcore:latest
+
+# Push to registry
+docker push your-registry.com/connectcore:latest
+```
+
+### Cloud Deployment
+
+The application is configured for deployment to:
+- Docker-compatible platforms
+- Kubernetes clusters
+- Cloud container services
 
 ## License
-MIT License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## Support
+
+For questions, issues, or contributions, please use the GitHub repository's issue tracker.

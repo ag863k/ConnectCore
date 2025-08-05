@@ -133,7 +133,7 @@ public class NotificationService : INotificationService
     {
         try
         {
-            // Parse notification type
+            
             if (!Enum.TryParse<NotificationType>(sendNotificationDto.Type, true, out var notificationType))
             {
                 return ApiResponse<NotificationDto>.FailureResult("Invalid notification type");
@@ -153,7 +153,7 @@ public class NotificationService : INotificationService
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
-            // Send notification based on type
+            
             bool sendResult = notificationType switch
             {
                 NotificationType.Email => await SendEmailNotificationAsync(notification),
@@ -163,7 +163,7 @@ public class NotificationService : INotificationService
                 _ => false
             };
 
-            // Update notification status
+            
             notification.Status = sendResult ? NotificationStatus.Sent : NotificationStatus.Failed;
             notification.SentAt = sendResult ? DateTime.UtcNow : null;
             notification.UpdatedAt = DateTime.UtcNow;
@@ -250,7 +250,7 @@ public class NotificationService : INotificationService
                 return ApiResponse<bool>.FailureResult("Only failed notifications can be retried");
             }
 
-            // Retry sending based on type
+            
             bool sendResult = notification.Type switch
             {
                 NotificationType.Email => await SendEmailNotificationAsync(notification),
@@ -260,7 +260,7 @@ public class NotificationService : INotificationService
                 _ => false
             };
 
-            // Update notification status
+            
             notification.Status = sendResult ? NotificationStatus.Sent : NotificationStatus.Failed;
             notification.SentAt = sendResult ? DateTime.UtcNow : notification.SentAt;
             notification.UpdatedAt = DateTime.UtcNow;
@@ -311,7 +311,6 @@ public class NotificationService : INotificationService
     {
         try
         {
-            // In a real implementation, you would get user email from user service
             var userEmail = $"user-{notification.UserId}@example.com";
             return await _emailService.SendEmailAsync(userEmail, notification.Title, notification.Message);
         }
@@ -326,7 +325,6 @@ public class NotificationService : INotificationService
     {
         try
         {
-            // In a real implementation, you would get user phone from user service
             var userPhone = "+1234567890";
             return await _smsService.SendSmsAsync(userPhone, notification.Message);
         }
@@ -341,7 +339,6 @@ public class NotificationService : INotificationService
     {
         try
         {
-            // In a real implementation, you would get user device token from user service
             var deviceToken = "mock-device-token";
             return await _pushService.SendPushNotificationAsync(deviceToken, notification.Title, notification.Message);
         }
@@ -356,8 +353,8 @@ public class NotificationService : INotificationService
     {
         try
         {
-            // In-app notifications are just stored in the database and marked as sent
-            await Task.Delay(10); // Simulate processing
+            
+            await Task.Delay(10); 
             return true;
         }
         catch (Exception ex)

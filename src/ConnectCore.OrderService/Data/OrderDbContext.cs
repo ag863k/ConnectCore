@@ -50,7 +50,7 @@ public class OrderDbContext : DbContext
             new Order
             {
                 Id = Guid.Parse("11110000-1111-1111-1111-111111111111"),
-                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"), // John Doe
+                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 Items = new List<OrderItem>
                 {
                     new() { ProductId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), ProductName = "Laptop Pro 15", Quantity = 1, UnitPrice = 1299.99m },
@@ -66,7 +66,7 @@ public class OrderDbContext : DbContext
             new Order
             {
                 Id = Guid.Parse("22220000-2222-2222-2222-222222222222"),
-                UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"), // Jane Smith
+                UserId = Guid.Parse("22222222-2222-2222-2222-222222222222"), 
                 Items = new List<OrderItem>
                 {
                     new() { ProductId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), ProductName = "Mechanical Keyboard", Quantity = 1, UnitPrice = 149.99m },
@@ -81,7 +81,7 @@ public class OrderDbContext : DbContext
             new Order
             {
                 Id = Guid.Parse("33330000-3333-3333-3333-333333333333"),
-                UserId = Guid.Parse("33333333-3333-3333-3333-333333333333"), // Bob Johnson
+                UserId = Guid.Parse("33333333-3333-3333-3333-333333333333"), 
                 Items = new List<OrderItem>
                 {
                     new() { ProductId = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), ProductName = "Office Chair", Quantity = 1, UnitPrice = 249.99m }
